@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Medicina China - Asistente IA y Enciclopedia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7f0;
+            color: #2c3e2f;
+        }
+        header {
+            background: #2d6a4f;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 1.8rem;
+        }
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            border-bottom: 2px solid #cfe3cf;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background: #e9f5e9;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 12px 12px 0 0;
+            transition: 0.2s;
+            font-weight: bold;
+            color: #2d6a4f;
+        }
+        .tab-btn.active {
+            background: #2d6a4f;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #fefefe;
+            border-left: 5px solid #2d6a4f;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            margin-bottom: 8px;
+            color: #1f543e;
+        }
+        .badge {
+            display: inline-block;
+            background: #d4e6d4;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-right: 6px;
+            margin-top: 5px;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafaf5;
+        }
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message.user {
+            align-items: flex-end;
+        }
+        .message.bot {
+            align-items: flex-start;
+        }
+        .bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .user .bubble {
+            background: #2d6a4f;
+            color: white;
+            border-radius: 20px 20px 5px 20px;
+        }
+        .bot .bubble {
+            background: #e9ecef;
+            color: #1e2a1e;
+            border-radius: 20px 20px 20px 5px;
+        }
+        .input-area {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background: white;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+        .input-area button {
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .input-area button:hover {
+            background: #1f543e;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #5e6b5e;
+        }
+        @media (max-width: 700px) {
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .bubble {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>🌿 Medicina Tradicional China</h1>
+    <p>Dietas • Puntos • Elementos • Síntomas • Remedios • IA Experta</p>
+</header>
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="ia">🤖 Asistente IA</button>
+        <button class="tab-btn" data-tab="dietas">🥗 Dietas & Alimentos</button>
+        <button class="tab-btn" data-tab="puntos">📍 Puntos & Precios</button>
+        <button class="tab-btn" data-tab="elementos">⚖️ 5 Elementos</button>
+        <button class="tab-btn" data-tab="sintomas">📋 Síntomas & Causas</button>
+        <button class="tab-btn" data-tab="remedios">🌱 Remedios</button>
+        <button class="tab-btn" data-tab="calor_frio">🔥❄️ Calor/Frío</button>
+    </div>
+
+    <div id="ia" class="tab-content active">
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="bubble">¡Hola! Soy tu asistente en Medicina China. Pregúntame sobre dietas, puntos, síntomas, elementos o cualquier tema de MTC. 🤗</div>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="questionInput" placeholder="Escribe tu pregunta... ej: ¿Qué comer para el insomnio?" autocomplete="off">
+                <button id="sendBtn">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dietas" class="tab-content"><div class="loading">Cargando datos...</div></div>
+    <div id="puntos" class="tab-content"><div class="loading">Cargando...</div></div>
+    <div id="elementos" class="tab-content"><div class="loading">Cargando...</div></div>
+    <div id="sintomas" class="tab-content"><div class="loading">Cargando...</div></div>
+    <div id="remedios" class="tab-content"><div class="loading">Cargando...</div></div>
+    <div id="calor_frio" class="tab-content"><div class="loading">Cargando...</div></div>
+</div>
+<footer>© App MTC - Datos integrados + IA Claude | Desplegable en Render y AppsGeyser</footer>
+
+<script>
+    let tcmData = {};
+
+    async function loadData() {
+        try {
+            const res = await fetch('/api/tcm_data');
+            tcmData = await res.json();
+            renderAllTabs();
+        } catch(e) {
+            console.error(e);
+            document.querySelectorAll('.tab-content .loading').forEach(el => el.innerText = 'Error cargando datos. Recarga la página.');
+        }
+    }
+
+    function renderAllTabs() {
+        if(tcmData.dietas) {
+            const container = document.getElementById('dietas');
+            container.innerHTML = '<h2>🍚 Alimentos y su naturaleza térmica</h2><div class="grid-cards"></div>';
+            const grid = container.querySelector('.grid-cards');
+            tcmData.dietas.forEach(food => {
+                grid.innerHTML += `<div class="card"><h3>${food.nombre}</h3><span class="badge">${food.naturaleza}</span><p><strong>Uso:</strong> ${food.uso}</p><p><strong>Recomendado:</strong> ${food.recomendado_para}</p></div>`;
+            });
+        }
+        if(tcmData.puntos_acupuntura && tcmData.precios) {
+            const container = document.getElementById('puntos');
+            container.innerHTML = `<h2>📍 Puntos de Acupuntura y Precios</h2>
+                                    <div class="grid-cards"></div>
+                                    <h3>💰 Precios de referencia</h3>
+                                    <div class="grid-cards" id="pricesGrid"></div>`;
+            const grid = container.querySelector('.grid-cards');
+            tcmData.puntos_acupuntura.forEach(p => {
+                grid.innerHTML += `<div class="card"><h3>${p.nombre}</h3><p><strong>Ubicación:</strong> ${p.ubicacion}</p><p><strong>Indicaciones:</strong> ${p.indicaciones}</p><p><span class="badge">Precio sugerido: ${p.precio_sugerido || 'consulta'}</span></p></div>`;
+            });
+            const pricesGrid = document.getElementById('pricesGrid');
+            for(let [k,v] of Object.entries(tcmData.precios)) {
+                pricesGrid.innerHTML += `<div class="card"><h3>${k.replace(/_/g,' ')}</h3><p>${v}</p></div>`;
+            }
+        }
+        if(tcmData.elementos) {
+            const container = document.getElementById('elementos');
+            container.innerHTML = '<h2>⚡ Los Cinco Elementos (Wu Xing)</h2><div class="grid-cards"></div>';
+            const grid = container.querySelector('.grid-cards');
+            tcmData.elementos.forEach(el => {
+                grid.innerHTML += `<div class="card"><h3>${el.nombre}</h3><p><strong>Órganos:</strong> ${el.organos}</p><p><strong>Emoción:</strong> ${el.emocion}</p><p><strong>Estación:</strong> ${el.estacion}</p><p><strong>Sabor:</strong> ${el.sabor}</p></div>`;
+            });
+        }
+        if(tcmData.sintomas_y_causas) {
+            const container = document.getElementById('sintomas');
+            container.innerHTML = '<h2>📌 Síntomas comunes y causas según MTC</h2><div class="grid-cards"></div>';
+            const grid = container.querySelector('.grid-cards');
+            for(let [sintoma, causa] of Object.entries(tcmData.sintomas_y_causas)) {
+                grid.innerHTML += `<div class="card"><h3>${sintoma}</h3><p>${causa}</p></div>`;
+            }
+        }
+        if(tcmData.remedios) {
+            const container = document.getElementById('remedios');
+            container.innerHTML = '<h2>🌿 Fórmulas y Remedios herbales</h2><div class="grid-cards"></div>';
+            const grid = container.querySelector('.grid-cards');
+            tcmData.remedios.forEach(r => {
+                grid.innerHTML += `<div class="card"><h3>${r.nombre}</h3><p><strong>Indicación:</strong> ${r.indicacion}</p><p><strong>Ingredientes principales:</strong> ${r.ingredientes}</p></div>`;
+            });
+        }
+        if(tcmData.caliente_frio) {
+            const cf = tcmData.caliente_frio;
+            const container = document.getElementById('calor_frio');
+            container.innerHTML = `<h2>🔥❄️ Patrones de Calor y Frío</h2>
+                                    <div class="grid-cards">
+                                        <div class="card"><h3>🔴 Síntomas de Calor</h3><p>${cf.calor_sintomas}</p></div>
+                                        <div class="card"><h3>🔵 Síntomas de Frío</h3><p>${cf.frio_sintomas}</p></div>
+                                        <div class="card"><h3>🌶️ Alimentos Calientes</h3><p>${cf.alimentos_calientes}</p></div>
+                                        <div class="card"><h3>🥒 Alimentos Fríos</h3><p>${cf.alimentos_frios}</p></div>
+                                        <div class="card"><h3>💡 Consejo</h3><p>${cf.consejo}</p></div>
+                                    </div>`;
+        }
+    }
+
+    const chatMessages = document.getElementById('chatMessages');
+    const questionInput = document.getElementById('questionInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function addMessage(text, isUser) {
+        const div = document.createElement('div');
+        div.className = `message ${isUser ? 'user' : 'bot'}`;
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerText = text;
+        div.appendChild(bubble);
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendQuestion() {
+        const question = questionInput.value.trim();
+        if(!question) return;
+        addMessage(question, true);
+        questionInput.value = '';
+        addMessage('⏳ Pensando...', false);
+        const loadingMsg = chatMessages.lastChild;
+        try {
+            const res = await fetch('/api/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: question})
+            });
+            const data = await res.json();
+            loadingMsg.remove();
+            addMessage(data.answer, false);
+        } catch(err) {
+            loadingMsg.remove();
+            addMessage('Error de conexión. Intenta de nuevo.', false);
+        }
+    }
+
+    sendBtn.addEventListener('click', sendQuestion);
+    questionInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') sendQuestion();
+    });
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    loadData();
+</script>
+</body>
+</html>
